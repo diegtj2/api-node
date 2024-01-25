@@ -4,7 +4,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  display: flexbox;
   padding: 2rem;
 }
 
@@ -18,8 +17,10 @@ a:hover {
 
 .div-table {
   border: 1px solid;
-  margin-left: 10em;
-  margin-right: 10em;
+  margin-left: 28em;
+  margin-right: 28em;
+  padding-left: 0.3em;
+  justify-content: center;
   text-align: left;
 }
 
