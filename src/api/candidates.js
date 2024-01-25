@@ -14,14 +14,9 @@ const Candidates = mongoose.model('Candidates', {
         
 })
 
-app.get("/", async (req, res) => {
-    const candidates = await Candidates.find()
+app.get("/:skills", async (req, res) => {
+    const candidates = await Candidates.find({skills: req.params.skills})
     return res.send(candidates)
-})
-
-app.delete("/:id", async(req, res) => {
-    const candidate = await Candidates.findByIdAndDelete(req.params.id)
-    return res.send(candidate)
 })
 
 app.post("/", async (req, res) =>{

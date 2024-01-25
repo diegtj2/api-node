@@ -1,50 +1,85 @@
-import React, {useState, useEffect} from 'react'
-import axios from 'axios'
+import React, { useState } from 'react';
+import axios from 'axios';
+import './index.css';
 
-function SearchCandidate(){
+function SearchCandidate() {
+  const [candidate, setCandidate] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [values, setValues] = useState(['']);
 
-    const [candidate, setCandidate] = useState([])
-    const [loading, setLoading] = useState(true)
+  function handleChange(event, index) {
+    const updatedValues = [...values];
+    updatedValues[index] = event.target.value;
+    setValues(updatedValues);
+  }
 
-    useEffect(() => {
-        axios.get('http://localhost:5000/')
-        .then(response =>{
-            setCandidate(response.data)
-            console.log(response)
-            setLoading(false)
-        })
-        .catch(error => {
-            console.log(error)
-            setLoading(false)
-        })
-    }, [])
+  function addInput() {
+    setValues([...values, '']);
+  }
 
-    if(loading){
-        return <div>Carregando...</div>
+  function removeInput() {
+    if (values.length > 1) {
+      const updatedValues = [...values];
+      updatedValues.pop();
+      setValues(updatedValues);
     }
+  }
+
+  function searchBySkill() {
+    setLoading(true);
+    const skillQuery = values.join('?');
     
-    return(
-        <div>
-            <h1>Buscar Candidatos</h1>
-            Skill:<input type="text" />
-            <input type="text" />
-            <button>+</button>
-            <button>Buscar</button>
-            
-            <h1>Resultado</h1>
-            <table>
-                {candidate.map(candidate => (
-                    <tr key={candidate._id}>
-                         Nome: {candidate.name} 
-                         <tr>
-                            Skills: {candidate.skills.join(', ')}
-                         </tr>
-                         <br />
-                    </tr>
-                ))}
-            </table>
+    axios.get(`http://localhost:5000/${skillQuery}`)
+      .then(response => {
+        setCandidate(response.data);
+        console.log(response);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.log(error);
+        setLoading(false);
+      });
+  }
+
+  return (
+    <div>
+      <h4>Buscar Candidatos</h4>
+      {values.map((value, index) => (
+        <div key={index}>
+          <input
+            className='input-skill'
+            placeholder='Skill'
+            type="text"
+            value={value}
+            onChange={(event) => handleChange(event, index)}
+          />
+        <button className='btn-plus' onClick={addInput}> + </button>
         </div>
-    )
+      ))}
+      <button className='btn' onClick={searchBySkill}>Buscar</button>
+
+      {loading && <p>Carregando...</p>}
+
+      {candidate.length > 0 && (
+        <div>
+          <h4>Resultado</h4>
+          <div>
+              {candidate.map(candidateItem => (
+                <div>
+                    <div className='div-table'>
+                        Nome: {candidateItem.name}
+                    </div>
+                    <div className='div-table'>
+                        Skills: {candidateItem.skills.join(', ')}
+                    </div>
+                    <br />
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default SearchCandidate
+export default SearchCandidate;
