@@ -28,21 +28,22 @@ function CreateCandidate() {
   }
 
   function create() {
-
-    // const skillQuery = values.join(',')
-
     const data = {
         name: valueName,
         skills: values
     }
-    
-    axios.post('http://localhost:5000/', data)
+
+    axios.post('http://localhost:5000/candidates/', data)
       .then(response => {
         console.log(response);
         alert('Candidato inserido com sucesso!')
       })
       .catch(error => {
-        console.error(error);
+        if (error?.response) {
+          alert(error.response.data);
+        } else {
+          console.error(error);
+        }
       });
   }
 
@@ -61,6 +62,7 @@ function CreateCandidate() {
                     onChange={(event) => handleChange(event, index)}
                 />
                 <button class="btn-plus" onClick={addInput}> + </button>
+                <button className='btn-plus' onClick={removeInput}> x </button>
             </div>
         ))}
         <button className="btn" onClick={create}>Cadastrar</button>

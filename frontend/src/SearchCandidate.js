@@ -27,12 +27,10 @@ function SearchCandidate() {
 
   function searchBySkill() {
     setLoading(true);
-    const skillQuery = values.join('?');
-    
-    axios.get(`http://localhost:5000/${skillQuery}`)
+    let skillQuery = `skills=${values.join('&skills=')}`;
+    axios.get(`http://localhost:5000/candidates/skills?${skillQuery}`)
       .then(response => {
         setCandidate(response.data);
-        console.log(response);
         setLoading(false);
       })
       .catch(error => {
@@ -54,6 +52,7 @@ function SearchCandidate() {
             onChange={(event) => handleChange(event, index)}
           />
         <button className='btn-plus' onClick={addInput}> + </button>
+        <button className='btn-plus' onClick={removeInput}> x </button>
         </div>
       ))}
       <button className='btn' onClick={searchBySkill}>Buscar</button>

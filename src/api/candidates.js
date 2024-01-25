@@ -10,24 +10,42 @@ const port = 5000
 
 const Candidates = mongoose.model('Candidates', {
     name: String,
-    skills: []
-        
+    skills: [],
+    createDate: Date
 })
 
-app.get("/:skills", async (req, res) => {
-    const candidates = await Candidates.find({skills: req.params.skills})
-    return res.send(candidates)
+app.get("/candidates/skills", async (req, res) => {
+    const filter = {};
+    if (req.query.skills) {
+        filter.skills = { $in: req.query.skills };
+    }
+    const candidates = await Candidates.find(filter)
+
+    if (!candidates?.length) {
+        return res.status(404).send();
+    }
+
+    return res.status(200).send(candidates)
 })
 
-app.post("/", async (req, res) =>{
-    
+app.post("/candidates", async (req, res) => {
     const candidate = new Candidates({
         name: req.body.name,
-        skills: req.body.skills    
-    })
+        skills: req.body.skills,
+        createDate: new Date()
+    });
+
+    if (!candidate.name) {
+        return res.status(400).send("Nome é obrigatório")
+    }
+
+    candidate.skills = candidate.skills.filter(s => s !== '');
+    if (!candidate.skills?.length) {
+        return res.status(400).send("Skills são obrigatórias")
+    }
 
     await candidate.save()
-    return res.send(candidate)
+    return res.status(201).send(candidate)
 })
 
 app.listen(port, () => {
